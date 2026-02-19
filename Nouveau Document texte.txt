@@ -1,0 +1,24 @@
+
+# --- AJOUTER CE BLOC DANS LA SIDEBAR ---
+with st.sidebar.expander("➕ Ajouter un visage"):
+    nom_personne = st.text_input("Nom de la personne")
+    photo_upload = st.file_uploader("Photo du visage", type=['jpg', 'png', 'jpeg'])
+    
+    if st.button("Sauvegarder le profil"):
+        if nom_personne and photo_upload:
+            # 1. Créer le dossier s'il n'existe pas
+            if not os.path.exists(Dossier_img):
+                os.makedirs(Dossier_img)
+            
+            # 2. Sauvegarder l'image
+            file_path = os.path.join(Dossier_img, f"{nom_personne}.jpg")
+            with open(file_path, "wb") as f:
+                f.write(photo_upload.getbuffer())
+            
+            st.sidebar.success(f"✅ {nom_personne} ajouté !")
+            
+            # 3. Forcer le rechargement du cache pour prendre en compte le nouveau visage
+            st.cache_resource.clear()
+            st.rerun() # Recharge la page immédiatement
+        else:
+            st.sidebar.error("⚠️ Il faut un nom et une photo.")
